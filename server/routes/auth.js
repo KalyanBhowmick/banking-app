@@ -11,6 +11,8 @@ const authMiddleware = require('../middleware/auth');
 const Router = express.Router();
 
 Router.post('/signup', async (req, res) => {
+  // eslint-disable-next-line
+  // console.log(req.body);
   try {
     const { first_name, last_name, email, password } = req.body;
     const validFieldsToUpdate = [
@@ -50,6 +52,8 @@ Router.post('/signup', async (req, res) => {
     );
     res.status(201).send();
   } catch (error) {
+    // eslint-disable-next-line
+    // console.log(error);
     res.status(400).send({
       signup_error: 'Error while signing up..Try again later.'
     });
@@ -58,6 +62,7 @@ Router.post('/signup', async (req, res) => {
 
 Router.post('/signin', async (req, res) => {
   try {
+    console.log('called');
     const { email, password } = req.body;
     const user = await validateUser(email, password);
     if (!user) {

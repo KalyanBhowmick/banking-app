@@ -2,9 +2,13 @@
 /* eslint-disable camelcase */
 import React from 'react';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { Form, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { validateFields } from '../utils/common';
+import { registerNewUser } from '../actions/auth';
+import { resetErrors } from '../actions/errors';
 
 class Register extends React.Component {
   constructor(props) {
@@ -21,8 +25,22 @@ class Register extends React.Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    // eslint-disable-next-line react/prop-types
+    if (!_.isEqual(prevProps.errors, this.props.errors)) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ errorMsg: this.props.errors });
+    }
+  }
+
+  componentWillUnmount() {
+    // eslint-disable-next-line react/prop-types
+    this.props.dispatch(resetErrors());
+  }
+
   registerUser = (event) => {
     event.preventDefault();
+    // eslint-disable-next-line react/destructuring-assignment
     const {
          first_name, last_name, email, password, cpassword,
         } = this.state;
@@ -48,6 +66,20 @@ class Register extends React.Component {
         });
       } else {
         this.setState({ isSubmitted: true });
+        // eslint-disable-next-line react/destructuring-assignment
+        this.props
+        // eslint-disable-next-line react/prop-types
+        .dispatch(registerNewUser({
+        first_name, last_name, email, password,
+        }))
+        .then((response) => {
+          if (response.success) {
+            this.setState({
+              successMsg: 'User registered succseefully',
+              errorMsg: '',
+            });
+          }
+        });
       }
   };
 
@@ -59,7 +91,8 @@ class Register extends React.Component {
   };
 
   render() {
-    const { errorMsg, successMsg, isSubmitted } = this.setState;
+    // eslint-disable-next-line react/destructuring-assignment
+    const { errorMsg, successMsg, isSubmitted } = this.state;
     return (
       <div className="login-page">
         <h2>Register Page</h2>
@@ -134,4 +167,12 @@ class Register extends React.Component {
   }
 }
 
-export default connect()(Register);
+Register.propTypes = {
+  errors: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  errors: state.errors,
+});
+
+export default connect(mapStateToProps)(Register);

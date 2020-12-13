@@ -8,6 +8,11 @@ module.exports = {
     indent: 0,
     'no-tabs': 0,
     'eol-last': ['error', 'always'],
+    'react/destructuring-assignment': [2, 'never',
+      {
+        ignoreClassFields: true,
+      },
+    ],
     'no-underscore-dangle': 0,
     'react/jsx-indent': 0,
     'react/jsx-indent-props': 0,
